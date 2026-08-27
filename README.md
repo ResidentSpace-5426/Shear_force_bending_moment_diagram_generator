@@ -4,7 +4,7 @@
 
 The goal of this tool is to generate the shear force and bending moment diagrams for an arbitrayr beam. This is meant to speed up the design process and anylisation of beams.
 
-## Requirements
+## Project requirements
 
 - Be able to handle:
   - Point forces
@@ -12,3 +12,7 @@ The goal of this tool is to generate the shear force and bending moment diagrams
   - Linear distrubuted loads
   - Equation driven distrubuted loads
 - Provide an image of the beam that is being analysed.
+
+## Python packages
+
+- numpy-2.5.2
