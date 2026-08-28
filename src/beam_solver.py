@@ -1,4 +1,5 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import Callable, Optional
 
 @dataclass
 class PointForce:
@@ -11,32 +12,42 @@ class PointMoment:
     magnitude: float   
 
 @dataclass
-class LinearDistrubutedLoad:
-    start_postion: float
-    end_postion: float
-    start_magnitude: float
-    end_magnitude: float
+class DistrubutedLoad:
+    # Start and end positions of the load
+    start_position: float
+    end_position: float
 
-    def magnitude_at(self, position: float) -> float:
-        if position < self.start_postion or position > self.end_postion:
+    func: Optional[Callable[[float], float]] = None
+    start_magnitude: Optional[float] = None
+    end_magnitude: Optional[float] = None
+
+    args: tuple = field(default_factory=tuple)
+    kwargs: dict = field(default_factory=dict)
+
+    def __post_init__(self):
+        if self.func is not None:
+            return
+
+        if self.start_magnitude is not None and self.end_magnitude is not None:
+            if self.start_position == self.end_position:
+                raise ValueError("Start and stop cannot be the same value")
+
+            if self.start_magnitude == self.end_magnitude:
+                self.func = lambda x: self.start_magnitude
+                return
+
+            else:
+                y0, y1 = self.start_magnitude, self.end_magnitude
+                x0, x1 = self.start_position, self.end_position
+
+                self.func = lambda x: y0 + (x - x0) * (y1 - y0) / (x1 - x0)
+                return
+
+        raise ValueError("Either func or start_magnitude and end_magnitude must be provided")
+
+    def eval_at(self, position: float) -> float:
+        if position < self.start_position or position > self.end_position:
             return 0.0
-        else:
-            # Linear interpolation between start and end magnitudes
-            slope = (self.end_magnitude - self.start_magnitude) / (self.end_postion - self.start_postion)
-            return self.start_magnitude + slope * (position - self.start_postion)
 
-@dataclass
-class EquationDistrubutedLoad:
-    start_postion: float
-    end_postion: float
-    equation: str  # This should be a string representing the equation
-
-    def magnitude_at(self, position: float) -> float:
-        if position < self.start_postion or position > self.end_postion:
-            return 0.0
-        else:
-            # Evaluate the equation at the given position
-            # Note: Using eval can be dangerous; ensure the input is sanitized in a real application
-            return eval(self.equation.replace('x', str(position)))
-
+        return self.func(position, *self.args, **self.kwargs)
 

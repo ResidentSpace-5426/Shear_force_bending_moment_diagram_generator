@@ -15,4 +15,5 @@ The goal of this tool is to generate the shear force and bending moment diagrams
 
 ## Python packages
 
-- numpy-2.5.2
+- nump
+- matplotlib
