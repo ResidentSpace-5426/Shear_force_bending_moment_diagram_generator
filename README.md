@@ -1,6 +1,6 @@
 # Shear force diagram and bending moment diagram generator
 
-## Goal
+## Description
 
 The goal of this tool is to generate the shear force and bending moment diagrams for an arbitrayr beam. This is meant to speed up the design process and anylisation of beams.
 
@@ -17,3 +17,9 @@ The goal of this tool is to generate the shear force and bending moment diagrams
 
 - nump
 - matplotlib
+
+## Functioning
+
+Generation of a beam object with `beam_1 = beam_solver.Beam(length=x)` where x is the length of the beam.
+
+Add point forces, point moments and distrubuted loads with their respective `beam.add_...` functions, passing in the required information.

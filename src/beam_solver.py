@@ -1,6 +1,10 @@
 from dataclasses import dataclass, field
 from typing import Callable, Optional
 
+# ------------------------------------------------------------------
+# | LOAD DATA STRUCTURES
+# ------------------------------------------------------------------
+
 @dataclass
 class PointForce:
     position: float
@@ -51,6 +55,10 @@ class DistrubutedLoad:
 
         return self.func(position, *self.args, **self.kwargs)
 
+# ------------------------------------------------------------------
+# | BEAM CONTAINER CLASS
+# ------------------------------------------------------------------
+    
 
 class Beam:
     def __init__(self, length: float):
@@ -59,31 +67,24 @@ class Beam:
         self.point_moments: list[PointMoment] = []
         self.distributed_loads: list[DistrubutedLoad] = []
 
-    def add_point_force(
-            self, 
-            position: float, 
-            magnitude: float
-        ) -> PointForce:
-        
+
+    def add_point_force(self, position: float, magnitude: float) -> PointForce:
         if position < 0 or position > self.length:
             raise ValueError("Position must be within beam length")
 
         force = PointForce(position, magnitude)
-
         self.point_forces.append((force))
-
         return force
 
-    def add_point_moment(
-            self, position: float, magnitude: float) -> PointMoment:
+
+    def add_point_moment(self, position: float, magnitude: float) -> PointMoment:
         if position < 0 or position > self.length:
             raise ValueError("Position must be within beam length")
 
         moment = PointMoment(position, magnitude)
-
         self.point_moments.append(moment)
-
         return moment
+
 
     def add_distrubuted_load(
             self, 
@@ -111,7 +112,6 @@ class Beam:
             args=args,
             kwargs=kwargs
         )
-
         self.distributed_loads.append(dist_loat)
         return dist_loat
 
