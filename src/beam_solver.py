@@ -3,7 +3,7 @@ from typing import Callable, Optional
 
 @dataclass
 class PointForce:
-    postion: float
+    position: float
     magnitude: float
 
 @dataclass
@@ -51,3 +51,68 @@ class DistrubutedLoad:
 
         return self.func(position, *self.args, **self.kwargs)
 
+
+class Beam:
+    def __init__(self, length: float):
+        self.length = length
+        self.point_forces: list[PointForce] = []
+        self.point_moments: list[PointMoment] = []
+        self.distributed_loads: list[DistrubutedLoad] = []
+
+    def add_point_force(
+            self, 
+            position: float, 
+            magnitude: float
+        ) -> PointForce:
+        
+        if position < 0 or position > self.length:
+            raise ValueError("Position must be within beam length")
+
+        force = PointForce(position, magnitude)
+
+        self.point_forces.append((force))
+
+        return force
+
+    def add_point_moment(
+            self, position: float, magnitude: float) -> PointMoment:
+        if position < 0 or position > self.length:
+            raise ValueError("Position must be within beam length")
+
+        moment = PointMoment(position, magnitude)
+
+        self.point_moments.append(moment)
+
+        return moment
+
+    def add_distrubuted_load(
+            self, 
+            start_position: float,
+            end_position: float, 
+            func: Optional[Callable[[float], float]] = None,
+            start_magnitude: Optional[float] = None,
+            end_magnitude: Optional[float] = None,
+            args: tuple = (),
+            kwargs: dict = None
+    ) -> DistrubutedLoad:
+
+        if kwargs is None:
+            kwargs = {}
+
+        if start_position < 0 or end_position > self.length:
+            raise ValueError("Start and end positions must be within beam length")
+
+        dist_loat = DistrubutedLoad(
+            start_position=start_position,
+            end_position=end_position,
+            func=func,
+            start_magnitude=start_magnitude,
+            end_magnitude=end_magnitude,
+            args=args,
+            kwargs=kwargs
+        )
+
+        self.distributed_loads.append(dist_loat)
+        return dist_loat
+
+    
